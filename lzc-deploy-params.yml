@@ -1,11 +1,4 @@
 params:
-  - id: meowmail_pin
-    type: secret
-    name: Meowmail PIN
-    description: PIN or passphrase used to sign in and encrypt stored mail credentials (4-128 characters)
-    default_value: $random(len=20)
-    optional: false
-
   - id: timezone
     type: string
     name: Time Zone
@@ -15,16 +8,10 @@ params:
 
 locales:
   zh:
-    meowmail_pin:
-      name: 妙邮 PIN 码
-      description: 用于登录并加密已保存邮件账户凭据的 PIN 或口令（4 至 128 个字符）
     timezone:
       name: 时区
       description: 妙邮使用的 IANA 时区，例如 Asia/Shanghai 或 Europe/Berlin
   en:
-    meowmail_pin:
-      name: Meowmail PIN
-      description: PIN or passphrase used to sign in and encrypt stored mail credentials (4-128 characters)
     timezone:
       name: Time Zone
       description: IANA time zone used by Meowmail, for example Asia/Shanghai or Europe/Berlin

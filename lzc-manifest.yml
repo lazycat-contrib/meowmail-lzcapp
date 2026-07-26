@@ -1,74 +1,31 @@
 application:
   subdomain: meowmail
-  multi_instance: true
+  multi_instance: false
   background_task: true
+  oidc_redirect_path: /api/v1/auth/oidc/callback
   upstreams:
     - location: /
       backend: http://meowmail:8080/
   injects:
-    - id: meowmail-login-autofill
+    - id: open-save-chooser
       on: browser
       when:
-        - /login
+        - "/*"
       do:
-        - src: |
-            (() => {
-              const password = String(ctx.params.password || "");
-              if (!password) return;
-
-              const timerKey = "__meowmailLazycatLoginTimer";
-              if (window[timerKey]) window.clearInterval(window[timerKey]);
-
-              const startedAt = Date.now();
-              const stop = () => {
-                if (window[timerKey]) window.clearInterval(window[timerKey]);
-                delete window[timerKey];
-              };
-              const attempt = () => {
-                if (Date.now() - startedAt > 10000) {
-                  stop();
-                  return;
-                }
-
-                const input = document.querySelector("#pin");
-                const form = input?.closest("form");
-                if (!(input instanceof HTMLInputElement) || !(form instanceof HTMLFormElement)) return;
-
-                if (input.value !== password) {
-                  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
-                  if (!setter) {
-                    stop();
-                    return;
-                  }
-                  setter.call(input, password);
-                  input.dispatchEvent(new InputEvent("input", {
-                    bubbles: true,
-                    inputType: "insertText",
-                    data: password,
-                  }));
-                  input.dispatchEvent(new Event("change", { bubbles: true }));
-                  return;
-                }
-
-                const submit = form.querySelector(".login-submit");
-                if (!(submit instanceof HTMLButtonElement) || submit.disabled) return;
-
-                stop();
-                if (typeof form.requestSubmit === "function") form.requestSubmit(submit);
-                else submit.click();
-              };
-
-              window[timerKey] = window.setInterval(attempt, 300);
-              attempt();
-            })();
-          params:
-            password: "{{ .U.meowmail_pin }}"
+        - src: file:///lzcapp/pkg/content/lazycat-injects/lzc-file-chooser-inject.js
 services:
   meowmail:
-    # upstream: docker.io/czyt/meowmail:v0.1.0
-    image: registry.lazycat.cloud/czyt/czyt/meowmail:bd617b18dbafa1d4
+    # upstream: docker.io/czyt/meowmail:v0.2.0
+    image: docker.io/czyt/meowmail:v0.2.0
     environment:
-      - MEOWMAIL_PIN={{ .U.meowmail_pin }}
+      - MEOWMAIL_AUTH_MODE=oidc
+      - MEOWMAIL_OIDC_FIRST_USER_ADMIN=true
+      - MEOWMAIL_OIDC_ISSUER=${LAZYCAT_AUTH_OIDC_ISSUER_URI}
+      - MEOWMAIL_OIDC_CLIENT_ID=${LAZYCAT_AUTH_OIDC_CLIENT_ID}
+      - MEOWMAIL_OIDC_CLIENT_SECRET=${LAZYCAT_AUTH_OIDC_CLIENT_SECRET}
+      - MEOWMAIL_OIDC_REDIRECT_URL=${LAZYCAT_PUBLIC_URL}/api/v1/auth/oidc/callback
+      - MEOWMAIL_VAULT_KEY={{ stable_secret "meowmail_vault_v1" }}
+      - MEOWMAIL_DATA_DIR=/data
       - TZ={{ .U.timezone }}
     binds:
       - /lzcapp/var/data:/data
