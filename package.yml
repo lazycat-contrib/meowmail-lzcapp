@@ -1,0 +1,18 @@
+package: cloud.lazycat.app.meowmail
+version: 0.1.0
+name: Meowmail
+description: A self-hosted multi-account web mail client with per-account HTTP and SOCKS5 proxy support
+author: ca-x
+license: MIT
+homepage: https://github.com/ca-x/meowmail
+min_os_version: 1.6.0
+permissions:
+  required:
+    - net.internet
+locales:
+  zh:
+    name: 妙邮
+    description: 支持多邮件账户及账户级 HTTP、SOCKS5 代理的自托管 Web 邮件客户端
+  en:
+    name: Meowmail
+    description: A self-hosted multi-account web mail client with per-account HTTP and SOCKS5 proxy support
