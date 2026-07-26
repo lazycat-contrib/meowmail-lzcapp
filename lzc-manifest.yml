@@ -11,14 +11,58 @@ application:
       when:
         - /login
       do:
-        - src: builtin://simple-inject-password
+        - src: |
+            (() => {
+              const password = String(ctx.params.password || "");
+              if (!password) return;
+
+              const timerKey = "__meowmailLazycatLoginTimer";
+              if (window[timerKey]) window.clearInterval(window[timerKey]);
+
+              const startedAt = Date.now();
+              const stop = () => {
+                if (window[timerKey]) window.clearInterval(window[timerKey]);
+                delete window[timerKey];
+              };
+              const attempt = () => {
+                if (Date.now() - startedAt > 10000) {
+                  stop();
+                  return;
+                }
+
+                const input = document.querySelector("#pin");
+                const form = input?.closest("form");
+                if (!(input instanceof HTMLInputElement) || !(form instanceof HTMLFormElement)) return;
+
+                if (input.value !== password) {
+                  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+                  if (!setter) {
+                    stop();
+                    return;
+                  }
+                  setter.call(input, password);
+                  input.dispatchEvent(new InputEvent("input", {
+                    bubbles: true,
+                    inputType: "insertText",
+                    data: password,
+                  }));
+                  input.dispatchEvent(new Event("change", { bubbles: true }));
+                  return;
+                }
+
+                const submit = form.querySelector(".login-submit");
+                if (!(submit instanceof HTMLButtonElement) || submit.disabled) return;
+
+                stop();
+                if (typeof form.requestSubmit === "function") form.requestSubmit(submit);
+                else submit.click();
+              };
+
+              window[timerKey] = window.setInterval(attempt, 300);
+              attempt();
+            })();
           params:
             password: "{{ .U.meowmail_pin }}"
-            requireUser: false
-            allowPasswordOnly: true
-            passwordSelector: "#pin"
-            submitSelector: ".login-submit"
-            autoSubmit: true
 services:
   meowmail:
     # upstream: docker.io/czyt/meowmail:v0.1.0
@@ -42,4 +86,3 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-usage: Open Meowmail from the launcher. The deployment PIN is filled and submitted automatically on the login page.
