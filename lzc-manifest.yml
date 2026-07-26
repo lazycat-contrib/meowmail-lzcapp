@@ -19,10 +19,10 @@ application:
             passwordSelector: "#pin"
             submitSelector: ".login-submit"
             autoSubmit: true
-
 services:
   meowmail:
-    image: docker.io/czyt/meowmail:0.1.0
+    # upstream: docker.io/czyt/meowmail:v0.1.0
+    image: registry.lazycat.cloud/czyt/czyt/meowmail:bd617b18dbafa1d4
     environment:
       - MEOWMAIL_PIN={{ .U.meowmail_pin }}
       - TZ={{ .U.timezone }}
@@ -42,5 +42,4 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-
 usage: Open Meowmail from the launcher. The deployment PIN is filled and submitted automatically on the login page.
