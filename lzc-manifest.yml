@@ -23,7 +23,7 @@ services:
       - MEOWMAIL_OIDC_ISSUER=${LAZYCAT_AUTH_OIDC_ISSUER_URI}
       - MEOWMAIL_OIDC_CLIENT_ID=${LAZYCAT_AUTH_OIDC_CLIENT_ID}
       - MEOWMAIL_OIDC_CLIENT_SECRET=${LAZYCAT_AUTH_OIDC_CLIENT_SECRET}
-      - MEOWMAIL_OIDC_REDIRECT_URL=${LAZYCAT_PUBLIC_URL}/api/v1/auth/oidc/callback
+      - MEOWMAIL_OIDC_REDIRECT_URL=https://${LAZYCAT_APP_DOMAIN}/api/v1/auth/oidc/callback
       - MEOWMAIL_VAULT_KEY={{ stable_secret "meowmail_vault_v1" }}
       - MEOWMAIL_DATA_DIR=/data
       - TZ={{ .U.timezone }}
