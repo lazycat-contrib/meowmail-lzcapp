@@ -16,7 +16,7 @@ application:
 services:
   meowmail:
     # upstream: docker.io/czyt/meowmail:v0.2.0
-    image: docker.io/czyt/meowmail:v0.2.0
+    image: registry.lazycat.cloud/czyt/czyt/meowmail:298d558e6b3e13cf
     environment:
       - MEOWMAIL_AUTH_MODE=oidc
       - MEOWMAIL_OIDC_FIRST_USER_ADMIN=true
