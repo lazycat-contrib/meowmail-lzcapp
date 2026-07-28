@@ -15,8 +15,8 @@ application:
         - src: file:///lzcapp/pkg/content/lazycat-injects/lzc-file-chooser-inject.js
 services:
   meowmail:
-    # upstream: docker.io/czyt/meowmail:v0.5.0
-    image: registry.lazycat.cloud/czyt/czyt/meowmail:b6b9f615ee16b484
+    # upstream: docker.io/czyt/meowmail:v0.6.1
+    image: registry.lazycat.cloud/czyt/czyt/meowmail:84684f591df9a82b
     environment:
       - MEOWMAIL_AUTH_MODE=oidc
       - MEOWMAIL_OIDC_FIRST_USER_ADMIN=true
