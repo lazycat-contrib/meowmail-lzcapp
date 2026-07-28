@@ -1,5 +1,5 @@
 package: cloud.lazycat.app.meowmail
-version: 0.7.0
+version: 0.7.1
 name: Meowmail
 description: A multi-user web mail client with OIDC sign-in, multiple mail accounts, per-account proxies, and personal cleanup rules
 author: ca-x
